@@ -115,4 +115,8 @@ public enum PhotosKit {
         return try await PhotosManager.shared.delete(assets)
     }
     
+    public static func requestExif(from asset: PHAsset) async throws -> [String: Any] {
+        return try await PhotosManager.shared.requestExif(from: asset)
+    }
+    
 }

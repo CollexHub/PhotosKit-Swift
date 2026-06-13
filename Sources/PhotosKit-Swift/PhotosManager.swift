@@ -8,17 +8,15 @@ private struct UncheckedSendable<Value>: @unchecked Sendable {
     let value: Value
 }
 
-public typealias PhotoManager = PhotosManager
-
-public final class PhotosManager {
+final class PhotosManager {
     
-    public static let shared = PhotosManager()
+    static let shared = PhotosManager()
     
     private let imageManager: PHImageManager = .default()
     
     private init() { }
     
-    public func checkPermission() async throws -> Bool {
+    func checkPermission() async throws -> Bool {
         var status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         if status == .authorized || status == .limited {
             return true
@@ -27,7 +25,7 @@ public final class PhotosManager {
         return status == .authorized || status == .limited
     }
     
-    public func fetchAssets(in album: PHAssetCollection? = nil) async throws -> PHFetchResult<PHAsset> {
+    func fetchAssets(in album: PHAssetCollection? = nil) async throws -> PHFetchResult<PHAsset> {
         let options = PHFetchOptions()
         options.sortDescriptors = [
             NSSortDescriptor(key: "creationDate", ascending: false)
@@ -42,7 +40,7 @@ public final class PhotosManager {
         }
     }
     
-    public func fetchAlbums() async throws -> [PHAssetCollection] {
+    func fetchAlbums() async throws -> [PHAssetCollection] {
         var albums: [PHAssetCollection] = []
         
         let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
@@ -60,7 +58,7 @@ public final class PhotosManager {
         return albums
     }
     
-    public func fetchImages() async throws -> PHFetchResult<PHAsset> {
+    func fetchImages() async throws -> PHFetchResult<PHAsset> {
         let options = PHFetchOptions()
         options.sortDescriptors = [
             NSSortDescriptor(key: "creationDate", ascending: false)
@@ -72,7 +70,7 @@ public final class PhotosManager {
         return PHAsset.fetchAssets(with: options)
     }
     
-    public func fetchLives() async throws -> PHFetchResult<PHAsset> {
+    func fetchLives() async throws -> PHFetchResult<PHAsset> {
         let options = PHFetchOptions()
         options.sortDescriptors = [
             NSSortDescriptor(key: "creationDate", ascending: false)
@@ -84,7 +82,7 @@ public final class PhotosManager {
         return PHAsset.fetchAssets(with: options)
     }
     
-    public func fetchVideos() async throws -> PHFetchResult<PHAsset> {
+    func fetchVideos() async throws -> PHFetchResult<PHAsset> {
         let options = PHFetchOptions()
         options.sortDescriptors = [
             NSSortDescriptor(key: "creationDate", ascending: false)
@@ -96,7 +94,7 @@ public final class PhotosManager {
         return PHAsset.fetchAssets(with: options)
     }
     
-    public func requestImage(
+    func requestImage(
         asset: PHAsset,
         size: CGSize = CGSize(width: 200, height: 200),
         mode: PHImageContentMode = .aspectFit,
@@ -123,7 +121,7 @@ public final class PhotosManager {
         }
     }
     
-    public func requestLive(
+    func requestLive(
         asset: PHAsset,
         size: CGSize = CGSize(width: 200, height: 200),
         mode: PHImageContentMode = .aspectFit,
@@ -150,7 +148,7 @@ public final class PhotosManager {
         }
     }
     
-    public func requestVideo(
+    func requestVideo(
         asset: PHAsset,
         deliveryMode: PHVideoRequestOptionsDeliveryMode = .highQualityFormat,
         isNetworkAccessAllowed: Bool = true
@@ -175,7 +173,7 @@ public final class PhotosManager {
         return videoAsset.value
     }
     
-    public func requestVideoUrl(
+    func requestVideoUrl(
         asset: PHAsset,
         deliveryMode: PHVideoRequestOptionsDeliveryMode = .highQualityFormat,
         isNetworkAccessAllowed: Bool = true
@@ -231,7 +229,7 @@ public final class PhotosManager {
         return url
     }
     
-    public func saveImage(
+    func saveImage(
         _ image: UIImage,
         in album: PHAssetCollection?
     ) async throws -> Bool {
@@ -253,7 +251,7 @@ public final class PhotosManager {
         }
     }
     
-    public func saveLive(
+    func saveLive(
         photoData: Data,
         videoUrl: URL,
         in album: PHAssetCollection?
@@ -280,7 +278,7 @@ public final class PhotosManager {
         }
     }
     
-    public func saveVideo(
+    func saveVideo(
         _ url: URL,
         in album: PHAssetCollection?
     ) async throws -> Bool {
@@ -302,7 +300,7 @@ public final class PhotosManager {
         }
     }
     
-    public func delete(_ assets: [PHAsset]) async throws -> Bool {
+    func delete(_ assets: [PHAsset]) async throws -> Bool {
         return try await withCheckedThrowingContinuation { continuation in
             PHPhotoLibrary.shared().performChanges {
                 PHAssetChangeRequest.deleteAssets(assets as NSArray)
@@ -316,7 +314,7 @@ public final class PhotosManager {
         }
     }
     
-    public func requestExif(from asset: PHAsset) async throws -> [String: Any] {
+    func requestExif(from asset: PHAsset) async throws -> [String: Any] {
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
         options.version = .original
