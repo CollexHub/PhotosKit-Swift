@@ -2,6 +2,7 @@ import AVFoundation
 import Foundation
 import Photos
 import UIKit
+import ImageIO
 
 private struct UncheckedSendable<Value>: @unchecked Sendable {
     let value: Value
@@ -300,7 +301,7 @@ public final class PhotosManager {
             }
         }
     }
-
+    
     public func delete(_ assets: [PHAsset]) async throws -> Bool {
         return try await withCheckedThrowingContinuation { continuation in
             PHPhotoLibrary.shared().performChanges {
@@ -311,6 +312,27 @@ public final class PhotosManager {
                     return
                 }
                 continuation.resume(returning: success)
+            }
+        }
+    }
+    
+    public func requestExif(from asset: PHAsset) async throws -> [String: Any] {
+        let options = PHImageRequestOptions()
+        options.isNetworkAccessAllowed = true
+        options.version = .original
+        return try await withCheckedThrowingContinuation { continuation in
+            imageManager.requestImageDataAndOrientation(
+                for: asset,
+                options: options
+            ) { data, _, _, _ in
+                guard let data = data,
+                      let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
+                      let metadata = CGImageSourceCopyMetadataAtIndex(imageSource, 0, nil) as? [String: Any]
+                else {
+                    continuation.resume(throwing: NSError(domain: "Request Exif Error", code: -1))
+                    return;
+                }
+                continuation.resume(returning: metadata)
             }
         }
     }
