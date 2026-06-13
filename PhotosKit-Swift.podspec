@@ -17,5 +17,5 @@ videos, and saving or deleting photo library assets.
   s.swift_version = '5.0'
   s.module_name = 'PhotosKit_Swift'
   s.source_files = 'Sources/PhotosKit-Swift/**/*.swift'
-  s.frameworks = 'AVFoundation', 'Photos', 'UIKit'
+  s.frameworks = 'AVFoundation', 'Photos', 'PhotosUI', 'UIKit'
 end

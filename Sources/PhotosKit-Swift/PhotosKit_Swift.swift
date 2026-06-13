@@ -119,4 +119,21 @@ public enum PhotosKit {
         return try await PhotosManager.shared.requestExif(from: asset)
     }
     
+    public static func preview(groupByDate: Bool = false, columnCount: Int = 3) {
+        Task { @MainActor in
+            try? await PhotosPickerPresenter.presentPreview(
+                groupByDate: groupByDate,
+                columnCount: columnCount
+            )
+        }
+    }
+
+    @MainActor
+    public static func showPicker(maxCount: Int = 1, groupByDate: Bool = false) async throws -> [PHAsset] {
+        try await PhotosPickerPresenter.presentPicker(
+            maxCount: maxCount,
+            groupByDate: groupByDate
+        )
+    }
+
 }
