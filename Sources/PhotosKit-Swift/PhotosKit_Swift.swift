@@ -2,6 +2,7 @@ import AVFoundation
 import Foundation
 import Photos
 import UIKit
+import PhotosUI
 
 public enum PhotosKit {
     
@@ -119,21 +120,12 @@ public enum PhotosKit {
         return try await PhotosManager.shared.requestExif(from: asset)
     }
     
-    public static func preview(groupByDate: Bool = false, columnCount: Int = 3) {
-        Task { @MainActor in
-            try? await PhotosPickerPresenter.presentPreview(
-                groupByDate: groupByDate,
-                columnCount: columnCount
-            )
-        }
+    public static func preview(groupByDate: Bool = false) {
+        PhotosPreview.show(groupByDate)
     }
 
-    @MainActor
     public static func showPicker(maxCount: Int = 1, groupByDate: Bool = false) async throws -> [PHAsset] {
-        try await PhotosPickerPresenter.presentPicker(
-            maxCount: maxCount,
-            groupByDate: groupByDate
-        )
+        return try await PhotosPicker.show(maxCount: maxCount, groupByDate: groupByDate)
     }
 
 }
