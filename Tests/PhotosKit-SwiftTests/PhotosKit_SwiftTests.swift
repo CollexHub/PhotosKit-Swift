@@ -68,6 +68,16 @@ final class PhotosKit_SwiftTests: XCTestCase {
         )
     }
 
+    func testPickerAlbumButtonIsConstrainedToTopBarCenter() throws {
+        let source = try sourceFile(named: "PhotosPicker.swift")
+
+        XCTAssertTrue(
+            source.contains(
+                "albumButton.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor)"
+            )
+        )
+    }
+
 }
 
 private func sourceFile(named name: String) throws -> String {

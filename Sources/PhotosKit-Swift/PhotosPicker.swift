@@ -137,9 +137,6 @@ final class PhotosPickerViewController: UIViewController {
     private var isAlbumSheetShown = false
     private var albumSheetHeightConstraint: NSLayoutConstraint!
 
-    private let topBarLeadingSpacer = UIView()
-    private let topBarTrailingSpacer = UIView()
-
     init(maxCount: Int, groupByDate: Bool, onComplete: @escaping ([PHAsset]) -> Void) {
         self.vm = PhotosPickerViewModel(maxCount: maxCount)
         self.groupByDate = groupByDate
@@ -187,18 +184,12 @@ final class PhotosPickerViewController: UIViewController {
         return "Done"
     }
 
-    private lazy var topBarView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [
-            closeButton,
-            topBarLeadingSpacer,
-            albumButton,
-            topBarTrailingSpacer,
-            doneButton
-        ])
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.spacing = 0
-        return stackView
+    private lazy var topBarView: UIView = {
+        let view = UIView()
+        view.addSubview(closeButton)
+        view.addSubview(albumButton)
+        view.addSubview(doneButton)
+        return view
     }()
 
     private lazy var overlayStackView: UIStackView = {
@@ -285,11 +276,13 @@ final class PhotosPickerViewController: UIViewController {
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         albumButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.translatesAutoresizingMaskIntoConstraints = false
-        topBarLeadingSpacer.translatesAutoresizingMaskIntoConstraints = false
-        topBarTrailingSpacer.translatesAutoresizingMaskIntoConstraints = false
         albumSheetView.translatesAutoresizingMaskIntoConstraints = false
 
         albumSheetHeightConstraint = albumSheetView.heightAnchor.constraint(equalToConstant: 0)
+        let albumButtonMinimumWidthConstraint = albumButton.widthAnchor.constraint(
+            greaterThanOrEqualToConstant: 120
+        )
+        albumButtonMinimumWidthConstraint.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
             assetCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -314,15 +307,26 @@ final class PhotosPickerViewController: UIViewController {
 
             closeButton.widthAnchor.constraint(equalToConstant: 45),
             closeButton.heightAnchor.constraint(equalToConstant: 45),
+            closeButton.leadingAnchor.constraint(equalTo: topBarView.leadingAnchor),
+            closeButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor),
 
             doneButton.heightAnchor.constraint(equalToConstant: 45),
             doneButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 70),
+            doneButton.trailingAnchor.constraint(equalTo: topBarView.trailingAnchor),
+            doneButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor),
 
             albumButton.heightAnchor.constraint(equalToConstant: 45),
-            albumButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 120),
-            albumButton.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, constant: -220),
-
-            topBarLeadingSpacer.widthAnchor.constraint(equalTo: topBarTrailingSpacer.widthAnchor),
+            albumButtonMinimumWidthConstraint,
+            albumButton.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor),
+            albumButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor),
+            albumButton.leadingAnchor.constraint(
+                greaterThanOrEqualTo: closeButton.trailingAnchor,
+                constant: 8
+            ),
+            albumButton.trailingAnchor.constraint(
+                lessThanOrEqualTo: doneButton.leadingAnchor,
+                constant: -8
+            ),
 
             albumSheetHeightConstraint
         ])
